@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 public class UsuarioPremium extends Usuario{
 
     private static final double porcentajeDescuento = 0.10;
+    
 
 }

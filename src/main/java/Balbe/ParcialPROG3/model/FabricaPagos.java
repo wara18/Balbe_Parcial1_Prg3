@@ -7,6 +7,8 @@ public class FabricaPagos { // forma que tenemos para realizar los pagos, recibe
         return new ProcesadorTarjeta();
     } else {
         return new ProcesadorBilletera();  // si no es tarjeta asume que es una billetera
+        }
     }
 }
-}
+
+

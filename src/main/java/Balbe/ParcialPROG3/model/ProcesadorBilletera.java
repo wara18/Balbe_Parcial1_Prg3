@@ -4,6 +4,6 @@ public class ProcesadorBilletera implements ProcesadorPago { // clase que implem
 
     @Override
     public void cobrar(double monto) {
-        System.out.println("Cobro exitoso de $" + monto + " realizado con Billetera Virtual");
+        System.out.println("Cobro exitoso de " + monto + " realizado con Billetera Virtual");
     }
 }
