@@ -1,5 +1,5 @@
 package Balbe.ParcialPROG3.model;
 
-public class ejemplo {
+public class EstacionesAnclaje {
 
 }

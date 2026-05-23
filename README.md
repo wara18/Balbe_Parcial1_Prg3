@@ -1,4 +1,4 @@
-# PARCIAL PROGRAMACION 3
+# PARCIAL PROGRAMACION 3 - HORA DE COMIENZO: 9:20hs
 ---------------------------------------------------------
 
 ## INTEGRANTES
