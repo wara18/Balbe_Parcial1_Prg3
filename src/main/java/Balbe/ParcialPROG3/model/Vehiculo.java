@@ -14,4 +14,8 @@ public class Vehiculo {
     private int porcentajeBateria;
     private double tarifaBase;
 
+    public String getPatente(){
+        return numPatente;
+    }
+
 }
