@@ -7,7 +7,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class UsuarioPremium extends Usuario{
 
-    private static final double porcentajeDescuento = 0.10;
-    
+    private static final double DESCUENTO = 0.10; // 10 de descuento
+
+    public UsuarioPremium(String nombreCompleto, String id) {
+        super(nombreCompleto, id);
+    }
+
+    @Override
+    public double calcularImporte(double tarifaBase) {
+        return tarifaBase - (tarifaBase * DESCUENTO); // applicacion del descuento teniendo en cuenta la tarifa
+    }
 
 }

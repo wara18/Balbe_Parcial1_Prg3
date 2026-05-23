@@ -6,6 +6,7 @@ import Balbe.ParcialPROG3.exceptions.BateriaInsuficienteException;
 import Balbe.ParcialPROG3.model.EstacionAnclaje;
 import Balbe.ParcialPROG3.model.FabricaPagos;
 import Balbe.ParcialPROG3.model.ProcesadorPago;
+import Balbe.ParcialPROG3.model.Usuario;
 import Balbe.ParcialPROG3.model.Vehiculo;
 
 @Service
@@ -26,7 +27,8 @@ public class ServicioAlquiler {
         }
 
         // si pasa las validaciones llega aqui
-        // falta la logica de calcular por tipo de usuario..
+
+        ///////////
         ProcesadorPago procesador = fabrica.crearProcesador(metodoPago);
         procesador.cobrar(vehiculo.getTarifaBase());
 

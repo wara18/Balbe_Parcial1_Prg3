@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public abstract class Usuario { // modificamos la clase para hacerla abstracta
 
     private String nombreCompleto;
     private String id;
+
+    public abstract double calcularImporte(double tarifaBase); // agregamos un metodo abstracto
     
 }

@@ -11,4 +11,9 @@ public class Monopatin extends Vehiculo {
 
     private boolean cuentaConAmortiguacion;
 
+    public Monopatin(String numPatente, int porcentajeBateria, double tarifaBase, boolean cuentaConAmortiguacion) {
+        super(numPatente, porcentajeBateria, tarifaBase);
+        this.cuentaConAmortiguacion = cuentaConAmortiguacion;
+    }
+
 }
