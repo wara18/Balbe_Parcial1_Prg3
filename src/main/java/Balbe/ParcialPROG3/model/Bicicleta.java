@@ -1,5 +1,14 @@
 package Balbe.ParcialPROG3.model;
 
-public class Bicicleta {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Bicicleta extends Vehiculo{
+
+    private int capacidadCanasto;
 
 }

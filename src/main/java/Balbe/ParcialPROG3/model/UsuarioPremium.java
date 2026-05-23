@@ -1,5 +1,12 @@
 package Balbe.ParcialPROG3.model;
 
-public class UsuarioPremium {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+public class UsuarioPremium extends Usuario{
+
+    private static final double porcentajeDescuento = 0.10;
 
 }
