@@ -17,7 +17,7 @@ public class EstadoEnEspera implements EstadoVehiculo {
 
     @Override
     public void finalizarViaje() {
-        throw new EstadoInvalidoException("No se puede finalizar un viaje: el vehículo no está en viaje.");
+        throw new EstadoInvalidoException("No se puede filnalizar un viaje: el vehículo no está en viaje.");
     }
 
     @Override
