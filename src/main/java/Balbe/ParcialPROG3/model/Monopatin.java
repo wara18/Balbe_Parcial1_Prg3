@@ -2,11 +2,10 @@ package Balbe.ParcialPROG3.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter // añadimos el getter
 public class Monopatin extends Vehiculo {
 
     private boolean cuentaConAmortiguacion;

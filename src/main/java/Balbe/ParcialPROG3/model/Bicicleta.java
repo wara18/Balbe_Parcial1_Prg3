@@ -1,13 +1,9 @@
 package Balbe.ParcialPROG3.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Bicicleta extends Vehiculo{
+@Getter // añado el getter
+public class Bicicleta extends Vehiculo {
 
     private int capacidadCanasto;
 
@@ -15,5 +11,4 @@ public class Bicicleta extends Vehiculo{
         super(numPatente, porcentajeBateria, tarifaBase);
         this.capacidadCanasto = capacidadCanasto;
     }
-
 }
