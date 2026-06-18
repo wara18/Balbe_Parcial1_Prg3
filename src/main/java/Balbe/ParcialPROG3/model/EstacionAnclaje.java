@@ -1,27 +1,40 @@
 package Balbe.ParcialPROG3.model;
-import java.util.List;
 
 import Balbe.ParcialPROG3.exceptions.VehiculoNoEncontradoException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+@Getter
 public class EstacionAnclaje {
 
     private String nombre;
-    private List<Vehiculo> vehiculos; // lista de vehículos disponibles en la estación
+    // cambiamos la lista por hashmap para buscar por patente directo sin recorrer todo
+    private Map<String, Vehiculo> vehiculos;
 
-    public Vehiculo buscarPorPatente(String patente) { // necesitamos un metodo que busque a un vehiculo x su patente,
-        // si no lo encuentra, lanza la exepcion
-        for (Vehiculo v : vehiculos) {                        
-            if (v.getPatente().equalsIgnoreCase(patente)) {   // ponemos esto para que se ignoren las mayusculas
-                return v;                                      
-            }
-        }
-        throw new VehiculoNoEncontradoException(patente); // si no encontro y salio del loop, lanza la excepcion
+    public EstacionAnclaje(String nombre) {
+        this.nombre = nombre;
+        this.vehiculos = new HashMap<>();
     }
 
+    public void agregarVehiculo(Vehiculo vehiculo) {
+        // la patente es la clave, facil de buscar despues
+        vehiculos.put(vehiculo.getNumPatente(), vehiculo);
+    }
+
+    public Vehiculo buscarPorPatente(String patente) {
+        Vehiculo vehiculo = vehiculos.get(patente);
+        // si no existe lanzamos la excepcion custom
+        if (vehiculo == null) {
+            throw new VehiculoNoEncontradoException("Vehículo con patente " + patente + " no encontrado.");
+        }
+        return vehiculo;
+    }
+
+    // devuelve solo los valores del mapa, no las claves
+    public Collection<Vehiculo> getVehiculos() {
+        return vehiculos.values();
+    }
 }
