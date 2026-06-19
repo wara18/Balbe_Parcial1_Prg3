@@ -41,8 +41,8 @@ public class ServicioAlquiler {
 
         // bateria minima 15%
         if (vehiculo.getPorcentajeBateria() < 15) {
-            throw new BateriaInsuficienteException("Batería insuficiente: " + vehiculo.getPorcentajeBateria() + "%");
-        }
+            throw new BateriaInsuficienteException(vehiculo.getNumPatente());
+            }
 
         Usuario usuario = cargaDatos.buscarUsuarioPorId(idUsuario);
         if (usuario == null) {
