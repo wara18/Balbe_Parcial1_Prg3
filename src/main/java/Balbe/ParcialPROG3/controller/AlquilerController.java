@@ -1,31 +1,38 @@
 package Balbe.ParcialPROG3.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import Balbe.ParcialPROG3.dto.RespuestaDesbloqueoDTO;
+import Balbe.ParcialPROG3.dto.RespuestaFinalizacionDTO;
 import Balbe.ParcialPROG3.service.ServicioAlquiler;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+// controlador principal de alquileres
 @AllArgsConstructor
 @RestController
+@RequestMapping("/api/alquileres")
 public class AlquilerController {
 
-    @Autowired
     private ServicioAlquiler servicio;
 
-    @GetMapping("/desbloquear/{idUsuario}/{patente}/{metodoPago}") // cambio esto pq si no, no sabemos como pasarle el JSON
-public ResponseEntity<String> desbloquear(
-    @PathVariable String idUsuario,
-    @PathVariable String patente,
-    @PathVariable String metodoPago) {
-    
-    String resultado = servicio.desbloquear(idUsuario, patente, metodoPago);
-    return ResponseEntity.ok(resultado);
-}
+    @GetMapping("/desbloquear/{idUsuario}/{patente}/{metodoPago}")
+    public ResponseEntity<RespuestaDesbloqueoDTO> desbloquear(
+            @PathVariable String idUsuario,
+            @PathVariable String patente,
+            @PathVariable String metodoPago) {
 
+        // ahora devuelve DTO en vez de String
+        RespuestaDesbloqueoDTO respuesta = servicio.desbloquear(idUsuario, patente, metodoPago);
+        return ResponseEntity.ok(respuesta);
+    }
 
+    // endpoint nuevo para finalizar el viaje
+    @GetMapping("/finalizar/{idUsuario}/{patente}")
+    public ResponseEntity<RespuestaFinalizacionDTO> finalizar(
+            @PathVariable String idUsuario,
+            @PathVariable String patente) {
+
+        RespuestaFinalizacionDTO respuesta = servicio.finalizar(idUsuario, patente);
+        return ResponseEntity.ok(respuesta);
+    }
 }

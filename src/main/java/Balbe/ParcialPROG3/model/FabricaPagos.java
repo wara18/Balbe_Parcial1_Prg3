@@ -1,5 +1,8 @@
 package Balbe.ParcialPROG3.model;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class FabricaPagos { // forma que tenemos para realizar los pagos, recibe los canalesfinancieros
 
     public ProcesadorPago crearProcesador(String metodoPago) {
