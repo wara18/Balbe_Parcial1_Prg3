@@ -10,7 +10,7 @@ Continuación del parcial 1
 - Nuñez Castelli Santiago - EISI1587
 
 ## Cómo correr
-Ejecutar `ParcialProg3Application.java` y acceder a `http://localhost:8080`
+Ejecutar "ParcialProg3Application.java" y acceder a `http://localhost:8080`
 
 ## Endpoints disponibles
 
