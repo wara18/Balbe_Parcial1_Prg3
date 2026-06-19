@@ -21,11 +21,11 @@ public class CargaDatos {
     }
 
     private void cargar() {
-        // usuarios de prueba
-        usuarios.add(new UsuarioRegular("1", "Santiago Nunez"));
-        usuarios.add(new UsuarioRegular("2", "Avila Wara"));
-        usuarios.add(new UsuarioPremium("3", "Martin Francisco"));
-        usuarios.add(new UsuarioPremium("4", "Perralta Lautaro"));
+        // usuarios de prueba, modificamos esto que estaba mal 
+        usuarios.add(new UsuarioRegular("Santiago Nunez", "1"));
+        usuarios.add(new UsuarioRegular("Avila Wara", "2"));
+        usuarios.add(new UsuarioPremium("Martin Francisco", "3"));
+        usuarios.add(new UsuarioPremium("Perralta Lautaro", "4"));
 
         // estacion centro
         EstacionAnclaje centro = new EstacionAnclaje("Estacion Centro");
