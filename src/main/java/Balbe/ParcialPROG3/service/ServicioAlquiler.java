@@ -1,51 +1,111 @@
 package Balbe.ParcialPROG3.service;
 
+import Balbe.ParcialPROG3.CargaDatos;
+import Balbe.ParcialPROG3.dto.RespuestaDesbloqueoDTO;
+import Balbe.ParcialPROG3.dto.RespuestaFinalizacionDTO;
+import Balbe.ParcialPROG3.exceptions.BateriaInsuficienteException;
+import Balbe.ParcialPROG3.exceptions.VehiculoNoEncontradoException;
+import Balbe.ParcialPROG3.model.*;
+import Balbe.ParcialPROG3.model.estrategia.EstrategiaTarifa;
+import Balbe.ParcialPROG3.model.estrategia.TarifaEstandar;
 import org.springframework.stereotype.Service;
 
-import Balbe.ParcialPROG3.CargaDatos;
-import Balbe.ParcialPROG3.exceptions.BateriaInsuficienteException;
-import Balbe.ParcialPROG3.model.EstacionAnclaje;
-import Balbe.ParcialPROG3.model.FabricaPagos;
-import Balbe.ParcialPROG3.model.ProcesadorPago;
-import Balbe.ParcialPROG3.model.Usuario;
-import Balbe.ParcialPROG3.model.Vehiculo;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
-@AllArgsConstructor
 @Service
 public class ServicioAlquiler {
 
-    private EstacionAnclaje estacion;
-    private FabricaPagos fabrica;
-    private CargaDatos cargaDatos;
+    private final CargaDatos cargaDatos;
+    private final FabricaPagos fabrica;
 
-    private Usuario buscarUsuarioPorId(String id) { // esto lo agregams para ver que tipo de usuario es
-        for (Usuario u : cargaDatos.getUsuarios()) { // mediante un foreach
-            if (u.getId().equals(id)) {
-                return u;
-            }
-        }
-        throw new RuntimeException("Usuario no encontrado: " + id); // excepcion si no se encuentra usuario
+    // estrategia activa, arranca estandar y se puede cambiar en runtime
+    private EstrategiaTarifa estrategiaActual;
+
+    public ServicioAlquiler(CargaDatos cargaDatos, FabricaPagos fabrica) {
+        this.cargaDatos = cargaDatos;
+        this.fabrica = fabrica;
+        this.estrategiaActual = new TarifaEstandar();
     }
 
-    // metodo apara ver si se desbloquea el vehiculo
-    public String desbloquear(String idUsuario, String patente, String metodoPago) {
+    // para cambiar la estrategia sin reiniciar la app
+    public void setEstrategia(EstrategiaTarifa estrategia) {
+        this.estrategiaActual = estrategia;
+    }
 
-        // primero busca por vehiculo y tira excepcion si no encuentra
-        Vehiculo vehiculo = estacion.buscarPorPatente(patente);
+    public RespuestaDesbloqueoDTO desbloquear(String idUsuario, String patente, String metodoPago) {
 
-        // despues verifica que la bateria sea suf
+        // buscamos el vehiculo en todas las estaciones
+        Vehiculo vehiculo = buscarVehiculoEnEstaciones(patente);
+
+        // bateria minima 15%
         if (vehiculo.getPorcentajeBateria() < 15) {
-            throw new BateriaInsuficienteException(patente);
+            throw new BateriaInsuficienteException("Batería insuficiente: " + vehiculo.getPorcentajeBateria() + "%");
         }
 
-        Usuario usuario = buscarUsuarioPorId(idUsuario); // sabemos si es premium o regular
+        Usuario usuario = cargaDatos.buscarUsuarioPorId(idUsuario);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario con id " + idUsuario + " no encontrado.");
+        }
 
-        // si pasa las validaciones llega aqui
-        double importe = usuario.calcularImporte(vehiculo.getTarifaBase()); // calcula el importe teniendo en cuenta el tipo de user
+        // esto cambia el estado internamente via State Pattern
+        vehiculo.iniciarViaje();
+
+        // costo estimado con 1 minuto base solo para mostrar algo al desbloquear
+        double costoEstimado = estrategiaActual.calcularCosto(vehiculo.getTarifaBase(), 1);
+        costoEstimado = usuario.calcularImporte(costoEstimado);
+
         ProcesadorPago procesador = fabrica.crearProcesador(metodoPago);
-        procesador.cobrar(importe); // se cobra el pago
+        procesador.cobrar(costoEstimado);
 
-        return "Desbloqueo exitoso del vehículo " + patente + ". Cobro realizado con " + metodoPago + ".";
+        return new RespuestaDesbloqueoDTO(
+                vehiculo.getNumPatente(),
+                costoEstimado,
+                vehiculo.getEstado().getNombre(),
+                "Viaje iniciado correctamente."
+        );
+    }
+
+    public RespuestaFinalizacionDTO finalizar(String idUsuario, String patente) {
+
+        Vehiculo vehiculo = buscarVehiculoEnEstaciones(patente);
+
+        Usuario usuario = cargaDatos.buscarUsuarioPorId(idUsuario);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario con id " + idUsuario + " no encontrado.");
+        }
+
+        // calculamos cuantos minutos paso desde que arranco el viaje
+        LocalDateTime inicio = vehiculo.getTiempoInicioViaje();
+        int minutos = (int) ChronoUnit.MINUTES.between(inicio, LocalDateTime.now());
+        // minimo 1 minuto para no cobrar cero
+        if (minutos < 1) minutos = 1;
+
+        double costoFinal = estrategiaActual.calcularCosto(vehiculo.getTarifaBase(), minutos);
+        costoFinal = usuario.calcularImporte(costoFinal);
+
+        // cambia estado a EN_ESPERA
+        vehiculo.finalizarViaje();
+
+        return new RespuestaFinalizacionDTO(
+                vehiculo.getNumPatente(),
+                costoFinal,
+                minutos,
+                vehiculo.getEstado().getNombre()
+        );
+    }
+
+    // busca en todas las estaciones, no solo una como antes
+    private Vehiculo buscarVehiculoEnEstaciones(String patente) {
+        List<EstacionAnclaje> estaciones = cargaDatos.getEstaciones();
+        for (EstacionAnclaje estacion : estaciones) {
+            try {
+                return estacion.buscarPorPatente(patente);
+            } catch (VehiculoNoEncontradoException e) {
+                // no estaba en esta estacion, seguimos buscando
+            }
+        }
+        throw new VehiculoNoEncontradoException("Vehículo con patente " + patente + " no encontrado en ninguna estación.");
     }
 }
